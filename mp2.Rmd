@@ -23,3 +23,5 @@ Look at states and their donations, where do most people who donate live?
 Contribution amount and result of election
 
 Looking state by state at individual elections
+
+Compare parties: dem, rep, ind
