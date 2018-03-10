@@ -12,6 +12,7 @@ load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+library(tidyverse)
 ```
 
 Compare:
@@ -25,3 +26,27 @@ Contribution amount and result of election
 Looking state by state at individual elections
 
 Compare parties: dem, rep, ind
+
+```{r}
+candidates%>%
+  inner_join(contributions, by="cand_id")
+```
+
+Not a super interesting plot, but we could aggregate some more probably. Incumbents definitely get more money spent against them than non-incumbents. Also Republicans get more money spent against them than Dems.
+```{r}
+test<-house_elections%>%
+  inner_join(contributions, by=c("fec_id"="cand_id"))
+
+ggplot(test, aes(x=incumbent, y=transaction_amt))+
+  geom_boxplot()
+
+repdem<-test%>%
+  filter(party=="R" | party=="D")
+
+ggplot(repdem, aes(x=party, y=transaction_amt))+
+  geom_boxplot()
+```
+
+```{r}
+test
+```
