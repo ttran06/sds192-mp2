@@ -5,6 +5,14 @@ date: "October 31, 2017"
 output: html_document
 ---
 
+<<<<<<< HEAD
+```{r}
+ahahaha
+```
+
+
+=======
+>>>>>>> 4759b1f54f9b57a815caa8140d7cdf1da8ce1033
 ## Loading the data
 
 ```{r, include=FALSE}
@@ -12,6 +20,27 @@ load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+<<<<<<< HEAD
+library(ggplot2)
+library(dplyr)
+```
+pull down, make changes, save file, git, stage file (click the check), commit, pull, push 
+```{r}
+#campaign finance over election result by party and state 
+#joining contributions and candidates together
+table1 <- contributions %>%
+inner_join(candidates, "cand_id") %>%
+#through ID
+  group_by(cand_id, cand_name, cand_party_affiliation) %>%
+  mutate(totaltrans = sum(transaction_amt))
+```
+
+```{r}
+///
+```
+
+
+=======
 library(tidyverse)
 ```
 
@@ -71,4 +100,5 @@ ggplot(repdem, aes(x=party, y=transaction_amt))+
 
 
 
+>>>>>>> 4759b1f54f9b57a815caa8140d7cdf1da8ce1033
 
