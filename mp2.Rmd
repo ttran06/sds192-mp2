@@ -28,10 +28,20 @@ Looking state by state at individual elections
 Compare parties: dem, rep, ind
 
 ```{r}
-candidates%>%
-  inner_join(contributions, by="cand_id")
-```
+test2<-contributions%>%
+  inner_join(house_elections, by=c("cand_id"="fec_id"))
 
+test3<-test2%>%
+  inner_join(candidates, by="cand_id")
+
+total<-test3%>%
+  group_by(cand_id, cand_name, cand_party_affiliation)%>%
+  mutate(against=if(transaction_amt<0) sum(transaction_amt) else 0)
+  
+  
+  
+
+```
 Not a super interesting plot, but we could aggregate some more probably. Incumbents definitely get more money spent against them than non-incumbents. Also Republicans get more money spent against them than Dems.
 ```{r}
 test<-house_elections%>%
@@ -48,5 +58,12 @@ ggplot(repdem, aes(x=party, y=transaction_amt))+
 ```
 
 ```{r}
-test
+
+#Overall: The effect of campaign finance on general election outcome
+#Look at effect of party, state 
+
 ```
+
+
+
+
