@@ -36,13 +36,18 @@ test3<-test2%>%
 
 total<-test3%>%
   group_by(cand_id, cand_name, cand_party_affiliation)%>%
-  mutate(against=if(transaction_amt<0) sum(transaction_amt) else 0)
-  
-  
-  
+  mutate(posneg=ifelse(transaction_amt>0, "positive","negative"))
+
+total%>%
+  group_by(cand_id, cand_name)%>%
+  summarise(against=sum(ifelse(transaction_amt<0, n, 0)),
+            support=sum(ifelse(transaction_amt>0, n, 0)))
 
 ```
+
+
 Not a super interesting plot, but we could aggregate some more probably. Incumbents definitely get more money spent against them than non-incumbents. Also Republicans get more money spent against them than Dems.
+
 ```{r}
 test<-house_elections%>%
   inner_join(contributions, by=c("fec_id"="cand_id"))
