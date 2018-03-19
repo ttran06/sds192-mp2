@@ -58,11 +58,18 @@ top50<-outcome%>%
   arrange(desc(support))%>%
   head(50)
 
+mostagainst<-outcome%>%
+  arrange(desc(against))%>%
+  head(50)
+
 ```
 
 ```{r}
 
 ggplot(top50, aes(x=cand_id, y=general_votes, color=ge_winner))+
+  geom_point()
+
+ggplot(mostagainst, aes(x=cand_id, y=general_votes, color=ge_winner))+
   geom_point()
 ```
 
