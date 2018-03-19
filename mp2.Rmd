@@ -52,7 +52,7 @@ totalcont<-total%>%
 
 ```{r}
 outcome<-totalcont%>%
-  left_join(house_elections, by=c("cand_id=fec_id"))
+  left_join(house_elections, by=c("cand_id"="fec_id"))
 ```
 
 ```{r}
