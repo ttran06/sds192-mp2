@@ -53,6 +53,17 @@ totalcont<-total%>%
 ```{r}
 outcome<-totalcont%>%
   left_join(house_elections, by=c("cand_id"="fec_id"))
+
+top50<-outcome%>%
+  arrange(desc(support))%>%
+  head(50)
+
+```
+
+```{r}
+
+ggplot(top50, aes(x=cand_id, y=general_votes, color=ge_winner))+
+  geom_point()
 ```
 
 ```{r}
