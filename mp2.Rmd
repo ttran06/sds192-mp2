@@ -5,10 +5,6 @@ date: "October 31, 2017"
 output: html_document
 ---
 
-<<<<<<< HEAD
-```{r}
-ahahaha
-```
 
 
 =======
@@ -20,7 +16,7 @@ load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
-<<<<<<< HEAD
+
 library(ggplot2)
 library(dplyr)
 ```
@@ -62,18 +58,21 @@ test2<-contributions%>%
 
 test3<-test2%>%
   inner_join(candidates, by="cand_id")
+```
 
+```{r}
 total<-test3%>%
   group_by(cand_id, cand_name, cand_party_affiliation)%>%
   mutate(posneg=ifelse(transaction_amt>0, "positive","negative"))
-
-total%>%
-  group_by(cand_id, cand_name)%>%
-  summarise(against=sum(ifelse(transaction_amt<0, n, 0)),
-            support=sum(ifelse(transaction_amt>0, n, 0)))
-
 ```
 
+```{r}
+total2<-total%>%
+  group_by(cand_id, cand_name)%>%
+  summarise(against=sum(ifelse(posneg=="negative", n, 0)),
+            support=sum(ifelse(posneg=="positive", n, 0)))
+            
+```
 
 Not a super interesting plot, but we could aggregate some more probably. Incumbents definitely get more money spent against them than non-incumbents. Also Republicans get more money spent against them than Dems.
 
