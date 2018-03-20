@@ -13,21 +13,15 @@ load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+```
 
-library(ggplot2)
-library(dplyr)
+```{r}
 library(tidyverse)
+library(gridExtra)
+library(cowplot)
+library(grid)
 ```
 pull down, make changes, save file, git, stage file (click the check), commit, pull, push 
-```{r}
-#campaign finance over election result by party and state 
-#joining contributions and candidates together
-table1 <- contributions %>%
-inner_join(candidates, "cand_id") %>%
-#through ID
-  group_by(cand_id, cand_name, cand_party_affiliation) %>%
-  mutate(totaltrans = sum(transaction_amt))
-```
 
 ```{r}
 test2<-contributions%>%
@@ -61,25 +55,48 @@ top50<-outcome%>%
 mostagainst<-outcome%>%
   arrange(desc(against))%>%
   head(50)
-
 ```
 
 ```{r}
+final<-outcome%>%
+  arrange(desc(general_votes))%>%
+  head(50)
 
-ggplot(top50, aes(x=cand_id, y=general_votes, color=ge_winner))+
-  geom_point()
+final<-final[-1, ]
 
-ggplot(mostagainst, aes(x=cand_id, y=general_votes, color=ge_winner))+
-  geom_point()
+plot1<-ggplot(final, aes(x=cand_name, y=support))+
+  geom_col()+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+plot2<-ggplot(final2, aes(x=cand_name, y=against))+
+  geom_col()+
+  theme(axis.text.x=element_text(angle=-90, size=5))
+
+grid.newpage()
+grid.draw(rbind(ggplotGrob(plot1), ggplotGrob(plot2), size = "last"))
 ```
 
 ```{r}
-#Overall: The effect of campaign finance on general election outcome
-#Look at effect of party, state 
+final<-outcome%>%
+  arrange(desc(general_votes))%>%
+  head(50)
 
+test<-final[-1, ]
+
+testplot<-ggplot(test, aes(x=cand_name, y=support))+
+  geom_col()+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+testplot2<-ggplot(test, aes(x=cand_name, y=against))+
+  geom_col()+
+  theme(axis.text.x=element_text(angle=-90, size=5))
+
+grid.newpage()
+grid.draw(rbind(ggplotGrob(testplot), ggplotGrob(testplot2), size = "last"))
 ```
 
-
-
->>>>>>> 4759b1f54f9b57a815caa8140d7cdf1da8ce1033
 
