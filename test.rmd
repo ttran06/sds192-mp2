@@ -1,0 +1,109 @@
+---
+title: "Mini-Project 2"
+author: "Your Name Here"
+date: "October 31, 2017"
+output: html_document
+---
+
+## Loading the data
+
+```{r, include=FALSE}
+load("house_elections.rda")
+load("candidates.rda")
+load("committees.rda")
+load("contributions.rda")
+```
+
+```{r}
+library(tidyverse)
+library(gridExtra)
+library(cowplot)
+library(grid)
+```
+
+```{r}
+test2 <- contributions %>%
+  inner_join(house_elections, by=c("cand_id"="fec_id"))
+
+test3 <- test2 %>%
+  inner_join(candidates, by="cand_id")
+```
+
+```{r}
+total <- test3 %>%
+  group_by(cand_id, cand_name, cand_party_affiliation) %>%
+  mutate(posneg=ifelse(transaction_amt>0, "positive","negative"))
+```
+
+```{r}
+totalcont<-total %>%
+  group_by(cand_id, cand_name) %>%
+  summarise(against = sum(ifelse(posneg == "negative", transaction_amt, 0)),
+            support = sum(ifelse(posneg == "positive", transaction_amt, 0)))
+```
+
+```{r}
+outcome <- totalcont %>%
+  left_join(house_elections, by=c("cand_id"="fec_id"))
+
+top50 <- outcome %>%
+  arrange(desc(support)) %>%
+  head(50)
+
+mostagainst <- outcome %>%
+  arrange(desc(against)) %>%
+  head(50)
+```
+
+```{r}
+final <- outcome %>%
+  arrange(desc(general_votes)) %>%
+  head(50)
+
+final <- final[-1, ]
+
+plot1 <- ggplot(final, aes(x=cand_name, y=support)) +
+  geom_col() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+plot2 <- ggplot(final2, aes(x=cand_name, y=against)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = -90, size = 5))
+
+grid.newpage()
+grid.draw(rbind(ggplotGrob(plot1), ggplotGrob(plot2), size = "last"))
+```
+
+```{r}
+final <- outcome %>%
+  arrange(desc(general_votes)) %>%
+  head(50)
+
+test <- final[-1, ]
+
+testplot <- ggplot(test, aes(x = cand_name, y = support)) +
+  geom_col() +
+  theme(#axis.title.x = element_blank(), 
+        axis.text.x = element_text(size = 9),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        plot.margin = unit(c(2,0,3,3), "mm")) +
+  scale_y_reverse() +
+  coord_flip()
+
+testplot2 <- ggplot(test, aes(x = cand_name, y = against)) +
+  geom_col() +
+  theme(#axis.title.x = element_blank(),
+        axis.text.x = element_text(size = 9),
+        axis.text.y = element_text(size = 5),
+        axis.title.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        plot.margin = unit(c(2,3,3,0), "mm")) +
+  scale_y_reverse() +
+  coord_flip()
+
+plot_grid(testplot, testplot2, ncol = 2)
+```
