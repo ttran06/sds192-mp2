@@ -124,6 +124,7 @@ testplot <- ggplot(final, aes(x = cand_name, y = support, fill=party)) +
         axis.ticks.y = element_blank(), 
         plot.margin = unit(c(2,0,3,3), "mm"),
         legend.position = c(.2,.3)) +
+  scale_fill_manual(values=c("#232066", "#E91D0E"))+
   scale_y_reverse() +
   coord_flip()+
   scale_y_continuous(breaks=c(0, 1000000,2000000,3000000), labels=c("0", "1M", "2M", "3M"))+
@@ -137,10 +138,12 @@ testplot2 <- ggplot(final, aes(x = cand_name, y = general_votes, fill=party)) +
         axis.text.y = element_blank(),
         axis.title.y = element_blank(), 
         axis.ticks.y = element_blank(), 
-        plot.margin = unit(c(2,-4,3,0), "mm")) +
-  scale_fill_discrete(guide=FALSE)+
+        plot.margin = unit(c(2,-4,3,0), "mm"),
+        axis.line.y=element_line(color="white")) +
+  scale_fill_discrete()+
+  scale_fill_manual(values=c("#232066", "#E91D0E"))+
   coord_flip() +
-  scale_y_continuous(breaks=c(1000000, 750000,500000,250000, 0 ), labels=c("1M", ".75M", ".5M", ".25M", "0"))+
+  scale_y_continuous(breaks=c(0,250000,500000,750000,1000000), labels=c("0", ".25M", ".5M", ".75M", "1M"))+
   ylim(1000000,0)+
   ylab("General Election Votes")
 
