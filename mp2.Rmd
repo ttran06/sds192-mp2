@@ -58,47 +58,71 @@ mostagainst<-outcome%>%
 ```
 
 ```{r}
-final<-outcome%>%
-  arrange(desc(general_votes))%>%
+final <- outcome %>%
+  arrange(desc(general_votes)) %>%
   head(50)
+final$cand_name <- factor(final$cand_name, levels = final$cand_name[order(final$support)])
 
-final<-final[-1, ]
 
-plot1<-ggplot(final, aes(x=cand_name, y=support))+
-  geom_col()+
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())
+testplot <- ggplot(final, aes(x = cand_name, y = support, fill=party)) +
+  geom_bar(stat="identity") +
+  theme(axis.title.x = element_blank(), 
+        axis.text.x = element_text(size = 9),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 5.5), 
+        axis.ticks.y = element_blank(), 
+        plot.margin = unit(c(2,0,3,3), "mm")) +
+  
+  scale_y_reverse() +
+  coord_flip()+
+  scale_y_continuous(breaks=c(0, 1000000,2000000,3000000), labels=c("0", "1M", "2M", "3M"))
 
-plot2<-ggplot(final2, aes(x=cand_name, y=against))+
-  geom_col()+
-  theme(axis.text.x=element_text(angle=-90, size=5))
+testplot2 <- ggplot(final, aes(x = cand_name, y = against, fill=party)) +
+  geom_bar(stat="identity") +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(size = 9),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        plot.margin = unit(c(2,-4,3,0), "mm")) +
+  scale_fill_discrete(guide=FALSE)+
+  coord_flip() +
+  scale_y_continuous(breaks=c(0, -100000, -200000), limits=c(-600000,0), labels=c("0", "-100K", "-200K" ))
 
-grid.newpage()
-grid.draw(rbind(ggplotGrob(plot1), ggplotGrob(plot2), size = "last"))
+plot_grid(testplot2, testplot, ncol = 2)
 ```
 
 ```{r}
-final<-outcome%>%
-  arrange(desc(general_votes))%>%
+final <- outcome %>%
+  arrange(desc(general_votes)) %>%
   head(50)
+final$cand_name <- factor(final$cand_name, levels = final$cand_name[order(final$support)])
 
-test<-final[-1, ]
+gather(final, key="cand_name")
 
-testplot<-ggplot(test, aes(x=cand_name, y=support))+
-  geom_col()+
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank(),
-        plot.margin = unit(c(0,0,0,0), "mm"))
+testplot <- ggplot(final, aes(x = cand_name, y = support, fill=party)) +
+  geom_bar(stat="identity") +
+  theme(axis.title.x = element_blank(), 
+        axis.text.x = element_text(size = 9),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 5.5), 
+        axis.ticks.y = element_blank(), 
+        plot.margin = unit(c(2,0,3,3), "mm")) +
+   scale_y_reverse() +
+  coord_flip()+
+  scale_y_continuous(breaks=c(0, 1000000,2000000,3000000), labels=c("0", "1M", "2M", "3M"))
 
-testplot2<-ggplot(test, aes(x=cand_name, y=against))+
-  geom_col()+
-  theme(axis.text.x=element_text(angle=-90, size=5),
-        plot.margin = unit(c(0,0,0,0), "mm"))
+testplot2 <- ggplot(final, aes(x = cand_name, y = against, fill=party)) +
+  geom_bar(stat="identity") +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(size = 9),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        plot.margin = unit(c(2,3,3,0), "mm")) +
+  scale_fill_discrete(guide=FALSE)+
+  coord_flip() +
+  scale_y_continuous(breaks=c(0, -50000, -100000, -150000))
 
-grid.newpage()
-grid.draw(rbind(ggplotGrob(testplot), ggplotGrob(testplot2), size = "last"))
+plot_grid(testplot2, testplot, ncol = 2)
 ```
-
-
