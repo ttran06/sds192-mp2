@@ -62,20 +62,22 @@ final <- outcome %>%
   arrange(desc(general_votes)) %>%
   head(50)
 final$cand_name <- factor(final$cand_name, levels = final$cand_name[order(final$support)])
+```
 
-
+```{r, message=FALSE}
 testplot <- ggplot(final, aes(x = cand_name, y = support, fill=party)) +
   geom_bar(stat="identity") +
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_text(size = 9),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 5.5), 
+        axis.text.y = element_text(size = 5.5, hjust=.5), 
         axis.ticks.y = element_blank(), 
-        plot.margin = unit(c(2,0,3,3), "mm")) +
-  
+        plot.margin = unit(c(2,0,3,3), "mm"),
+        legend.position = c(.3,.3)) +
   scale_y_reverse() +
   coord_flip()+
-  scale_y_continuous(breaks=c(0, 1000000,2000000,3000000), labels=c("0", "1M", "2M", "3M"))
+  scale_y_continuous(breaks=c(0, 1000000,2000000,3000000), labels=c("0", "1M", "2M", "3M"))+
+  scale_fill_discrete(name="Party", breaks = c("D", "N", "R"), labels=c("Democrat", "New Progressive", "Republican"))
 
 testplot2 <- ggplot(final, aes(x = cand_name, y = against, fill=party)) +
   geom_bar(stat="identity") +
@@ -87,10 +89,15 @@ testplot2 <- ggplot(final, aes(x = cand_name, y = against, fill=party)) +
         plot.margin = unit(c(2,-4,3,0), "mm")) +
   scale_fill_discrete(guide=FALSE)+
   coord_flip() +
-  scale_y_continuous(breaks=c(0, -100000, -200000), limits=c(-600000,0), labels=c("0", "-100K", "-200K" ))
+  scale_y_continuous(breaks=c(0, -100000, -200000), limits=c(-600000,0), labels=c("0", "-100K", "-200K" ))+
+   theme(axis.line.y=element_line(color="white"))+
+  annotate("segment", x = 0, xend = 51, y = -1, yend =-1,
+  colour = "black")
 
 plot_grid(testplot2, testplot, ncol = 2)
 ```
+
+
 
 ```{r}
 final <- outcome %>%
