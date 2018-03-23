@@ -1,5 +1,5 @@
 ---
-title: "Mini-Project 2: Analyzing the campaign finance for the 50 candidates with the most general election votes"
+title: "Mini-Project 2: Analyzing individual campaign finance for the 50 candidates with the most general election votes"
 author: "Truc Tran, Pinn Janvatanavit, Irene Ryan"
 date: "October 31, 2017"
 output: 
@@ -19,43 +19,48 @@ library(tidyverse)
 library(gridExtra)
 library(cowplot)
 library(grid)
+library(devtools)
 ```
+
+#Background:
+
+  Campaign finance in the America has been around since George Washington. "According to legend, he entertained potential supporters of his 1757 bid for the Virginia House of Burgesses with a banquet that featured plenty of wine, hard cider and gourmet eats. Plying the potential voters with food and drink worked, and Washington was duly elected to the House of Burgesses—which almost immediately passed an act prohibiting candidates from giving any sort of “reward” like food, drink or cash in exchange for a vote." A big focus in the 2016 presidential election was on the candidates’ finances.  The media scrutinized who and what companies, corporations, etc. contributed to the candidates’ campaign. Candidates like Bernie Sanders and Donald Trump touted their use of crowd-sourced and self-funded campaigns. Ultimately, the two nominees, Trump and Hillary Clinton, received about 2.4 billion in total contributions (957.6 million for Trump, 1.4 billion for Clinton). The Clinton campaign spent 98% of its contributions, while the Trump campaign spent 99% of its contributions. Discounting the other political circumstances, in the end Trump had less campaign funding than Hillary, and still won. This subverts a common notion that has driven American elections for decades: our money equals our power, our money equals our voice.
 
 #Data Wrangling:
 
 ```{r, message=FALSE}
 #Joining Contributions data with House Elections data
 
-test2<-contributions%>%
-  inner_join(house_elections, by=c("cand_id"="fec_id"))  
+test2 <- contributions %>%
+  inner_join(house_elections, by = c("cand_id" = "fec_id"))  
 
 #Joining new df with Candidates data
 
-test3<-test2%>%
-  inner_join(candidates, by="cand_id")   
+test3 <- test2 %>%
+  inner_join(candidates, by = "cand_id")   
 
 #Grouping by candidate and party affiliation to create a variable that separates donations towards and against
 
-total<-test3%>%
-  group_by(cand_id, cand_name, cand_party_affiliation)%>%          
-  mutate(posneg=ifelse(transaction_amt>0, "positive","negative"))  
+total <- test3 %>%
+  group_by(cand_id, cand_name, cand_party_affiliation) %>%          
+  mutate(posneg = ifelse(transaction_amt > 0, "positive","negative"))  
 
 #Creating the against and support variables which are total donated toward and against each cand.
 
-totalcont<-total%>%
-  group_by(cand_id, cand_name)%>% 
-  summarise(against=sum(ifelse(posneg=="negative", transaction_amt, 0)),   
-            support=sum(ifelse(posneg=="positive", transaction_amt, 0))) 
+totalcont <- total %>%
+  group_by(cand_id, cand_name) %>% 
+  summarise(against = sum(ifelse(posneg == "negative", transaction_amt, 0)),   
+            support = sum(ifelse(posneg == "positive", transaction_amt, 0))) 
 
 #rejoin House Elections data with our new df
 
-outcome<-totalcont%>%
-  left_join(house_elections, by=c("cand_id"="fec_id")) 
+outcome <- totalcont%>%
+  left_join(house_elections, by = c("cand_id" = "fec_id")) 
 
 #Excluding the non-republican and democrat candidates from our final data set, then choosing the top 50 most vote earning candidates to visualize
 
 final <- outcome %>%
-  filter(party=="D" | party=="R")%>%   
+  filter(party == "D" | party == "R")%>%   
   arrange(desc(general_votes)) %>%
   head(50)
 final$cand_name <- factor(final$cand_name, levels = final$cand_name[order(final$general_votes)])
@@ -63,11 +68,10 @@ final$cand_name <- factor(final$cand_name, levels = final$cand_name[order(final$
 
 #Plots:
 
+testplot is the first graph we created, which is the plot on the right and shows support donations vs candidate. testplot2 is the plot on the left and shows general election votes vs candidate, which we ordered in descending order to clearly show these were the top 50 people with the most votes.
 ```{r, message=FALSE}
-#Plot of support donations vs candidate, creates plot on the right
-
-testplot <- ggplot(final, aes(x = cand_name, y = support, fill=party)) +
-  geom_bar(stat="identity") +
+testplot <- ggplot(final, aes(x = cand_name, y = support, fill = party)) +
+  geom_bar(stat = "identity") +
   theme(axis.title.x = element_text(), 
         axis.text.x = element_text(size = 9),
         axis.title.y = element_blank(),
@@ -75,34 +79,33 @@ testplot <- ggplot(final, aes(x = cand_name, y = support, fill=party)) +
         axis.ticks.y = element_blank(), 
         plot.margin = unit(c(2,0,3,3), "mm"),
         legend.position = "none",
-        axis.line.y=element_line(color="white")) +
+        axis.line.y = element_line(color = "white")) +
   scale_y_reverse() +
-  coord_flip()+
-  scale_y_continuous(breaks=c(0, 1000000,2000000,3000000), labels=c("0", "1M" , "2M", "3M"))+
-  ylab("Support Donation")+
-  scale_fill_manual(values=c("#232066", "#E91D0E"))
+  coord_flip() +
+  scale_y_continuous(breaks = c(0, 1000000,2000000,3000000), labels = c("0", "1M" , "2M", "3M")) +
+  ylab("Support Donation") +
+  scale_fill_manual(values = c("#232066", "#E91D0E"))
 
-#Plot of general election votes vs candidate, the plot on the left
-
-testplot2 <- ggplot(final, aes(x = cand_name, y = general_votes, fill=party)) +
-  geom_bar(stat="identity") +
+testplot2 <- ggplot(final, aes(x = cand_name, y = general_votes, fill = party)) +
+  geom_bar(stat = "identity") +
   theme(axis.title.x = element_text(),
         axis.text.x = element_text(size = 9),
         axis.text.y = element_blank(),
         axis.title.y = element_blank(), 
         axis.ticks.y = element_blank(), 
         plot.margin = unit(c(2,-4,3,0), "mm"),
-        axis.line.y=element_line(color="white"),
-        legend.position = c(.03, .4))+
-  ylab("General Election Votes")+
-scale_fill_manual(values=c("#232066", "#E91D0E"), name="Party", breaks = c("D", "R"), labels=c("Democrat", "Republican"))  +
+        axis.line.y=element_line(color = "white"),
+        legend.position = c(.03, .4)) +
+  ylab("General Election Votes") +
+scale_fill_manual(values = c("#232066", "#E91D0E"), name = "Party", breaks = c("D", "R"), labels = c("Democrat", "Republican"))  +
   coord_flip() + 
-  ylim(450000, 0) +  scale_y_reverse(breaks=c(300000,200000, 100000,0), labels=c("300K", "200K", "100K", "0"))
+  ylim(450000, 0) +  
+  scale_y_reverse(breaks = c(300000,200000, 100000,0), labels = c("300K", "200K", "100K", "0"))
 
-title <- ggdraw() + draw_label("Relationship Between General Election Votes and Supporting Donations", fontface='bold', size=12)
+title <- ggdraw() + draw_label("Relationship Between General Election Votes and Supporting Donations", fontface = 'bold', size = 12)
 plots<-plot_grid(testplot2, testplot, ncol = 2, rel_widths = c(1, 1.3))
 
-finalplot<-plot_grid(title, plots, ncol=1, rel_heights=c(0.1, 1))
+finalplot <- plot_grid(title, plots, ncol = 1, rel_heights = c(0.1, 1))
 ```
 
 #Final Plot:
@@ -110,3 +113,5 @@ finalplot<-plot_grid(title, plots, ncol=1, rel_heights=c(0.1, 1))
 ```{r, message=FALSE}
 finalplot
 ```
+
+  With our visualization, we set out to display the relationship between individual campaign finance and total general election votes. Our hypothesis was that the people who received the most individual general election votes would be the people who received the most support money. However, it turned out that the correlation is actually quite low. None of the 50 candidates who received the most general election votes include the top 50 candidates who received the most support donations. Our visualization doesn't take into account money spent against the candidates, so that could be confounding it, however we plotted the Support Donations vs the Against Donations during our data wrangling and found the relationship between those variables is also not very strong. And as it turns out, of the total money the two nominees, Clinton's was 16% Super PAC-funded and Trump was 26%. This brings up a lot of questions about campaign finance and the idea that our money is our voice in politics, and clearly it isn't. 
