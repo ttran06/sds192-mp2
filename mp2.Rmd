@@ -69,6 +69,7 @@ final$cand_name <- factor(final$cand_name, levels = final$cand_name[order(final$
 #Plots:
 
 testplot is the first graph we created, which is the plot on the right and shows support donations vs candidate. testplot2 is the plot on the left and shows general election votes vs candidate, which we ordered in descending order to clearly show these were the top 50 people with the most votes.
+
 ```{r, message=FALSE}
 testplot <- ggplot(final, aes(x = cand_name, y = support, fill = party)) +
   geom_bar(stat = "identity") +
