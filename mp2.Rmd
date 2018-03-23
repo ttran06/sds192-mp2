@@ -27,7 +27,7 @@ library(devtools)
   Campaign finance in the America has been around since George Washington. "According to legend, he entertained potential supporters of his 1757 bid for the Virginia House of Burgesses with a banquet that featured plenty of wine, hard cider and gourmet eats. Plying the potential voters with food and drink worked, and Washington was duly elected to the House of Burgesses—which almost immediately passed an act prohibiting candidates from giving any sort of “reward” like food, drink or cash in exchange for a vote." A big focus in the 2016 presidential election was on the candidates’ finances.  The media scrutinized who and what companies, corporations, etc. contributed to the candidates’ campaign. Candidates like Bernie Sanders and Donald Trump touted their use of crowd-sourced and self-funded campaigns. Ultimately, the two nominees, Trump and Hillary Clinton, received about 2.4 billion in total contributions (957.6 million for Trump, 1.4 billion for Clinton). The Clinton campaign spent 98% of its contributions, while the Trump campaign spent 99% of its contributions. Discounting the other political circumstances, in the end Trump had less campaign funding than Hillary, and still won. This subverts a common notion that has driven American elections for decades: our money equals our power, our money equals our voice.
 
 #Data Wrangling:
-First, we joined the Contributions data with the House Elections data.  Then, we joined the resulting df with the Candidates data.  Next, we grouped the candidate and party affiliation to create a variable that separates donations towards and against the candidate.  We created two columns for the contributions for and against the 
+First, we joined the Contributions data with the House Elections data.  Then, we joined the resulting df with the Candidates data.  Next, we grouped the candidate and party affiliation to create a variable that separates donations towards and against the candidate.  We created two columns for the contributions for and against the candidate. We excluded third party candidates from the data, then we select the top 50 candidates with the most votes in the general election.
 
 ```{r, message=FALSE}
 #Joining Contributions data with House Elections data
@@ -116,8 +116,6 @@ finalplot <- plot_grid(title, plots, ncol = 1, rel_heights = c(0.1, 1))
 finalplot
 ```
 
-<<<<<<< HEAD
 [Github link](https://github.com/ttran06/sds192-mp2)
 =======
   With our visualization, we set out to display the relationship between individual campaign finance and total general election votes. Our hypothesis was that the people who received the most individual general election votes would be the people who received the most support money. However, it turned out that the correlation is actually quite low. None of the 50 candidates who received the most general election votes include the top 50 candidates who received the most support donations. Our visualization doesn't take into account money spent against the candidates, so that could be confounding it, however we plotted the Support Donations vs the Against Donations during our data wrangling and found the relationship between those variables is also not very strong. And as it turns out, of the total money the two nominees, Clinton's was 16% Super PAC-funded and Trump was 26%. This brings up a lot of questions about campaign finance and the idea that our money is our voice in politics, and clearly it isn't. 
->>>>>>> b25b8da465004735f3c1e790474e67af4d68da58
