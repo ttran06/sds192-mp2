@@ -22,6 +22,7 @@ library(grid)
 ```
 
 #Data Wrangling:
+First, we joined the Contributions data with the House Elections data.  Then, we joined the resulting df with the Candidates data.  Next, we grouped the candidate and party affiliation to create a variable that separates donations towards and against the candidate.  We created two columns for the contributions for and against the 
 
 ```{r, message=FALSE}
 #Joining Contributions data with House Elections data
@@ -110,3 +111,5 @@ finalplot<-plot_grid(title, plots, ncol=1, rel_heights=c(0.1, 1))
 ```{r, message=FALSE}
 finalplot
 ```
+
+[Github link](https://github.com/ttran06/sds192-mp2)
